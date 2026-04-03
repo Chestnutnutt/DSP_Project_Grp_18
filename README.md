@@ -165,7 +165,15 @@ These results suggest that the final handcrafted feature representation was more
 ### Error Analysis
 
 Common confusion cases were still observed in the final system.  
-![Alt text](ML%20RESULTS/log_reg_confusion_matrix.png)
+| Logistic Regression | Random Forest |
+|---|---|
+| <img src="ML%20Results/log_reg_confusion_matrix.png" alt="Logistic Regression Confusion Matrix" width="100%"> | <img src="ML%20Results/random_forest_confusion_matrix.png" alt="Random Forest Confusion Matrix" width="100%"> |
+
+| SVM | XGBoost |
+|---|---|
+| <img src="ML%20Results/svm_confusion_matrix.png" alt="SVM Confusion Matrix" width="100%"> | <img src="ML%20Results/xgb_confusion_matrix.png" alt="XGBoost Confusion Matrix" width="100%"> |
+
+
 In the notebook’s misclassification examples, `car_horn` was predicted as `clapping`, `clock_alarm`, `chirping_birds`, and `train`, showing that this class was particularly difficult to separate reliably.  
 More broadly, `clock_tick` achieved an F1-score of 0.00 in SVM, random forest, and XGBoost, which indicates that some transient or weak-pattern classes remained challenging regardless of classifier choice.
 
@@ -189,6 +197,8 @@ By contrast, the lower results from random forest and XGBoost suggest that the c
 To reproduce the project results, run the Colab notebook from top to bottom without skipping cells, starting with the group ID cell, dependency installation, dataset download/extraction, feature extraction, model training, and final submission generation cells.
 
 The notebook expects the dataset to be extracted under content/data/ and then uses content/data/train and content/data/submission as the training and submission directories.
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cv1Ca65uVn4o1oGNZPcVl9eFC8Y7CpAe?usp=sharing)
 
 
 ### Environment Setup
