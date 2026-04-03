@@ -104,7 +104,7 @@ The final model used a 273-dimensional handcrafted DSP feature vector composed o
 These features were selected because environmental sounds differ strongly in timbre, spectral distribution, and transient structure.  
 For example, percussive sounds such as knocking and gunshots tend to have sharp temporal changes, while sounds like rain or engine noise exhibit more sustained spectral energy patterns.
 
-Several additional features were also implemented, including dominant frequency, spectral peak structure, pitch tracking, spectral flatness, spectral bandwidth, and zero-crossing rate. However, these features were excluded from the final pipeline because they were commented out in the final extractor and were not part of the final 273-dimensional feature vector used for training and prediction.
+Several additional features extraction functions were also implemented, including dominant frequency, spectral peak structure, pitch tracking, spectral flatness, spectral bandwidth, and zero-crossing rate. However, these features were excluded from the final pipeline because they failed to contribute in a positive manner to the classification outcomes of the machine learning models.
 
 #### Model Comparison
 
