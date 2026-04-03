@@ -216,6 +216,56 @@ Possible reasons for these errors include:
 - Short-duration or transient events that may not be fully captured by pooled statistical features that were heavily used.
 - Loss of low or high-frequency content in degraded or bandlimited samples, which can remove useful discriminatory information.
 
+<ins>Analysis: Airplane Signals</ins>
+
+The table below displays the incorrect classifications made by the SVM model for the Airplane class.
+<img src="Analysis/Airplane/airplane_classification_errors.png" width="25%">
+
+An example airplane audio signal in the time and frequency domain is shown below.
+<img src="Analysis/Airplane/airplane_signal_example.png" width="45%">
+
+For comparison, an example audio signal in the time and frequency domain for the car horn and engine classes, which were classes that the SVM model incorrectly classified the airplane signals as, is also shown below.
+<img src="Analysis/Airplane/car_horn_signal_example.png" width="45%">
+<img src="Analysis/Airplane/engine_signal_example.png" width="45%">
+
+
+<ins>Analysis: Car Horn Signals</ins>
+
+The table below displays the incorrect classifications made by the SVM model for the Car Horn class.
+<img src="Analysis/Car Horn/car_horn_classification_errors.png" width="25%">
+
+An example car horn audio signal in the time and frequency domain is shown below.
+<img src="Analysis/Car Horn/car_horn_signal_example.png" width="45%">
+
+For comparison, an example audio signal in the time and frequency domain for the clapping and train classes, which were classes that the SVM model incorrectly classified the car horn signals as, is also shown below.
+<img src="Analysis/Car Horn/clapping_signal_example.png" width="45%">
+<img src="Analysis/Car Horn/train_signal_example.png" width="45%">
+
+
+<ins>Analysis: Clock Tick Signals</ins>
+
+The table below displays the incorrect classifications made by the SVM model for the Clock Tick class.
+<img src="Analysis/Clock Tick/clock_tick_classification_errors.png" width="25%">
+
+An example clock tick audio signal in the time and frequency domain is shown below.
+<img src="Analysis/Clock Tick/clock_tick_signal_example.png" width="45%">
+
+For comparison, an example audio signal in the time and frequency domain for the drinking-sipping and laughing classes, which were classes that the SVM model incorrectly classified the clock tick signals as, is also shown below.
+<img src="Analysis/Clock Tick/drinking_sipping_signal_example.png" width="45%">
+<img src="Analysis/Clock Tick/laughing_signal_example.png" width="45%">
+
+<ins>Analysis: Coughing Signals</ins>
+
+The table below displays the incorrect classifications made by the SVM model for the Coughing class.
+<img src="Analysis/Coughing/coughing_classification_errors.png" width="25%">
+
+An example coughing audio signal in the time and frequency domain is shown below.
+<img src="Analysis/Coughing/coughing_signal_example.png" width="45%">
+
+For comparison, an example audio signal in the time and frequency domain for the crying baby and laughing classes, which were classes that the SVM model incorrectly classified the coughing signals as, is also shown below.
+<img src="Analysis/Coughing/crying_baby_signal_example.png" width="45%">
+<img src="Analysis/Coughing/laughing_signal_example.png" width="45%">
+
 ---
 
 ## Reproducibility
