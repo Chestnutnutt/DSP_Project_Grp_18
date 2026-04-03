@@ -41,7 +41,7 @@ The goal is to improve robustness for clean, noisy, and bandlimited audio clips 
 - `README.md`: Documentation for project structure, usage, and results.
 ---
 
-## DSP Implementation
+## Implementation
 ### 1. Audio Preprocessing
 
 ## Core preprocessing
@@ -65,8 +65,32 @@ This table describes the conditional logic that is only applied when the clip ap
 | Low-SNR audio | The preprocessing function estimates SNR from frame-energy percentiles and compares it against `denoise_if_snr_below`; inthe feature extraction call, this threshold is set to 5.0 dB | If the estimated SNR is below the threshold, the waveform is processed with `librosa.effects.preemphasis(y, coef=0.95)` | This emphasizes higher-frequency content and can improve robustness for degraded recordings |
 | Band-limited audio | The code estimates an effective cutoff frequency from the STFT, then marks audio as band-limited when the cutoff is at or below 5500 Hz and the spectral drop is at least 18 dB | If detected, `enhance_near_cutoff(...)` applies a band-pass boost near the estimated cutoff, with a default boost of 20 dB and peak re-normalization afterward | This tries to recover useful energy near the cutoff region for clips that have restricted high-frequency content |
 
-### 2. Feature Extraction
-The system uses handcrafted DSP features to capture temporal and spectral characteristics of environmental sounds:
+---
+
+## Model and Experiments
+### Model
+
+The final classifier used in this project is:
+
+- `Pipeline(StandardScaler + SVM)`
+
+### Experimental Setup
+
+Experiments were conducted to compare different classical machine learning models using the same extracted feature representation.
+
+
+#### Feature Extraction
+
+The final model used a 273-dimensional handcrafted DSP feature vector composed of:
+
+- MFCC statistics
+- Log-mel spectrogram statistics
+- Spectral centroid statistics
+- Spectral contrast statistics
+- Spectral rolloff statistics
+- Amplitude envelope statistics
+- RMSE statistics
+
 | Feature Function | Description | 
 |---|---:|
 | `features_mfcc_stats(y, sr)` | MFCC statistics, including delta and delta-delta summaries 
@@ -77,41 +101,39 @@ The system uses handcrafted DSP features to capture temporal and spectral charac
 | `amplitude_envelope_stats(y, sr)` | Amplitude envelope statistics: mean, std, max, and min 
 | `rmse_stats(y, sr)` | Root-mean-square energy mean and standard deviation 
 
-
-### 3. DSP Design Rationale
-
 These features were selected because environmental sounds differ strongly in timbre, spectral distribution, and transient structure.  
 For example, percussive sounds such as knocking and gunshots tend to have sharp temporal changes, while sounds like rain or engine noise exhibit more sustained spectral energy patterns.
 
----
+Several additional features were also implemented, including dominant frequency, spectral peak structure, pitch tracking, spectral flatness, spectral bandwidth, and zero-crossing rate. However, these features were excluded from the final pipeline because they were commented out in the final extractor and were not part of the final 273-dimensional feature vector used for training and prediction.
 
-## Model and Experiments
-### Model
-The main classifier used in this project is:
--  `SVM` 
+#### Model Comparison
 
-### Experimental Setup
-Experiments were conducted to compare:
+The following models were evaluated:
 
-## Features Extraction:
-Several additional features were implemented, including dominant frequency, spectral peak structure, pitch tracking, spectral flatness, spectral bandwidth, and zero-crossing rate. However, these features were excluded from the final pipeline because they were commented out in the final extractor and therefore were not part of the final 273-dimensional feature vector used for model training and prediction
-- Baseline features vs improved DSP features
-- With and without preprocessing
-- With and without bandlimited enhancement
-- Different classifier choices and hyperparameters
+- Logistic Regression
+- SVM
+- Random Forest
+- XGBoost
+
+Different classifier settings were tested, and the final model was selected based on validation performance.
 
 ### Evaluation Metric
-The primary evaluation metric is:
+
+The primary evaluation metric used in this project is:
+
 - Macro F1-score
 
-Additional metrics:
+Additional reported metrics include:
+
 - Accuracy
-- Per-class precision/recall/F1
+- Per-class precision, recall, and F1-score
 - Confusion matrix
 
 ### Final Model Choice
-The final model was selected based on validation Macro F1-score and robustness across degraded audio conditions.  
-Briefly explain why it was chosen over the alternatives.
+
+The final model selected was the SVM classifier.
+
+It was chosen because it achieved the best validation performance among all tested models, with an accuracy of 0.73 and a Macro-F1 score of 0.7155. Compared with logistic regression, random forest, and XGBoost, the SVM provided the best balance between overall classification performance and class-wise robustness.
 
 ---
 
@@ -143,6 +165,7 @@ These results suggest that the final handcrafted feature representation was more
 ### Error Analysis
 
 Common confusion cases were still observed in the final system.  
+![Alt text](ML%20RESULTS/log_reg_confusion_matrix.png)
 In the notebook’s misclassification examples, `car_horn` was predicted as `clapping`, `clock_alarm`, `chirping_birds`, and `train`, showing that this class was particularly difficult to separate reliably.  
 More broadly, `clock_tick` achieved an F1-score of 0.00 in SVM, random forest, and XGBoost, which indicates that some transient or weak-pattern classes remained challenging regardless of classifier choice.
 
