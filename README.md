@@ -148,20 +148,49 @@ Possible reasons:
 ---
 
 ## Reproducibility
+
+To reproduce the project results, run the Colab notebook from top to bottom without skipping cells, starting with the group ID cell, dependency installation, dataset download/extraction, feature extraction, model training, and final submission generation cells.
+
+The notebook expects the dataset to be extracted under content/data/ and then uses content/data/train and content/data/submission as the training and submission directories.
+
+
 ### Environment Setup
 
+1. Open the notebook in Google Colab and enter the correct GROUPID when prompted, since this value is used when naming the final model and prediction files.
+
+2. Run the setup cells to install the required Python packages, including NumPy, SciPy, pandas, scikit-learn, librosa, soundfile, tqdm, gdown, and XGBoost-related imports used later in the notebook.
+
+3. Run the dataset download cell to fetch CEG3004ProjectData.zip, then run the extraction cell so the files are unpacked into the content/ directory.
+
+4. Run the path configuration and dataset safety-check cells to confirm that labels.csv, metadata.csv, and both audio/ folders are present in the expected locations.
 
 
 ### Data Requirements
 
+The notebook expects a training set in data/train with labels.csv and an audio/ folder, and a submission set in data/submission with metadata.csv and its own audio/ folder.
+
+The dataset check in the notebook confirms 1200 labeled training clips and 1200 submission clips in the provided structure.
+
+Audio files are loaded as mono and resampled to 16 kHz before preprocessing and feature extraction
 
 ### Outputs
 
+Running the full notebook produces a trained model file named [GROUPID]model.joblib and a submission file named [GROUPID]predictions.csv.
+
+The model file is created after the train/validation split, model fitting, evaluation, and save step, while the predictions CSV is created after the submission audio files are passed through the same feature extractor and trained model.
+
+The notebook also displays evaluation outputs such as the classification report, macro-F1 score, confusion matrix, and a table of selected misclassifications.
 
 ### Reproducibility Notes
-- Audio is resampled to a consistent sampling rate.
-- Feature extraction uses the same configuration for training and inference.
-- The final model and experiment settings are recorded in the repository.
+- Audio is resampled to a consistent 16 kHz sampling rate using the same loading function for all clips.
+
+- Feature extraction uses the same extractfeatures(...) pipeline for both training data and submission inference.
+
+- The final active feature set consists of MFCC statistics, log-mel statistics, spectral centroid, spectral contrast, spectral rolloff, amplitude envelope statistics, and RMSE statistics, which together produce a 273-dimensional feature vector.
+
+- Preprocessing includes peak normalization, silence trimming, optional low-SNR pre-emphasis behavior, and optional band-limited audio enhancement within the same preprocessing function.
+
+- For consistent results, keep the same dataset paths, feature configuration, train/validation split settings, random seed, and model definition used in the notebook’s training section.
 ---
 
 ## Limitations
