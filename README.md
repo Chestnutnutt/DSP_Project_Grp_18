@@ -34,13 +34,25 @@ project-root/
 
 ## DSP Implementation
 ### 1. Audio Preprocessing
-The preprocessing stage standardizes audio before feature extraction. The pipeline includes:
-- Mono loading and resampling to 16 kHz
-- Amplitude normalization
-- Silence trimming
-- Padding/truncation to a fixed duration
-- Bandlimited-audio detection using spectral cutoff analysis
-- Near-cutoff enhancement for detected bandlimited clips
+
+## Core preprocessing
+
+| Step | What the code does | Purpose |
+|---|---|---|
+| Audio loading | Loads each waveform with `librosa.load(path, sr=16000, mono=True)` and converts it to `float32` | Standardizes sampling rate and channel format so all clips are processed consistently |
+| Invalid-value cleanup | Replaces NaN values with valid numeric values using `np.nan_to_num(...)` | Prevents corrupted samples from breaking later preprocessing or feature extraction steps |
+| Peak normalization | Scales the waveform so the maximum absolute amplitude becomes 1 using `peak_normalise(y)` | Makes threshold-based operations more stable across clips with different loudness levels |
+| Silence trimming | Removes leading and trailing low-energy regions with `librosa.effects.trim(y, top_db=30)` | Reduces unnecessary silence so features focus more on the actual sound event |
+| Empty-signal fallback | If trimming removes everything, the function returns a 1-second zero signal instead of an empty array | Ensures downstream feature extraction always receives a valid waveform |
+
+## Adaptive preprocessing
+
+This table describes the conditional logic that is only applied when the clip appears noisy or band-limited.
+
+| Condition | What the code checks | Action taken | Why it helps |
+|---|---|---|---|
+| Low-SNR audio | The preprocessing function estimates SNR from frame-energy percentiles and compares it against `denoise_if_snr_below`; in your feature extraction call, this threshold is set to 5.0 dB | If the estimated SNR is below the threshold, the waveform is processed with `librosa.effects.preemphasis(y, coef=0.95)` | This emphasizes higher-frequency content and can improve robustness for degraded recordings |
+| Band-limited audio | The code estimates an effective cutoff frequency from the STFT, then marks audio as band-limited when the cutoff is at or below 5500 Hz and the spectral drop is at least 18 dB | If detected, `enhance_near_cutoff(...)` applies a band-pass boost near the estimated cutoff, with a default boost of 20 dB and peak re-normalization afterward | This tries to recover useful energy near the cutoff region for clips that have restricted high-frequency content |
 
 ### 2. Feature Extraction
 The system uses handcrafted DSP features to capture temporal and spectral characteristics of environmental sounds:
