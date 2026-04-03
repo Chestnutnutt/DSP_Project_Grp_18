@@ -15,27 +15,15 @@ The goal is to improve robustness for clean, noisy, and bandlimited audio clips 
 ```text
 ├── Code/
 │   └── CEEG3004_Main_program.py
-├── outputs/
-│   ├── svm/
-│   │   ├── model.joblib
-│   │   ├── predictions.csv
-│   │   ├── classification_report.txt
-│   │   └── confusion_matrix.png
-│   ├── random_forest/
-│   │   ├── model.joblib
-│   │   ├── predictions.csv
-│   │   ├── classification_report.txt
-│   │   └── confusion_matrix.png
-│   ├── xgboost/
-│   │   ├── model.joblib
-│   │   ├── predictions.csv
-│   │   ├── classification_report.txt
-│   │   └── confusion_matrix.png
-│   └── baseline_logreg/
-│       ├── model.joblib
-│       ├── predictions.csv
-│       ├── classification_report.txt
-│       └── confusion_matrix.png
+├── ML Results/
+│   ├── log_reg_confusion_matrix.png
+│   ├── log_reg_score.txt
+│   ├── random_forest_confusion_matrix.png
+│   ├── random_forest_score.txt
+│   ├── svm_confusion_matrix.png
+│   ├── svm_score.txt
+│   ├── xgb_confusion_matrix.png
+│   └── xgb_score.txt
 └── README.md
 ```
 
@@ -128,22 +116,48 @@ Briefly explain why it was chosen over the alternatives.
 ---
 
 ## Results and Discussion
+
+### Model Comparison
+
+The four evaluated models showed clear performance differences on the validation set.  
+Among them, the SVM achieved the best overall result, with 0.73 accuracy and a Macro-F1 score of 0.7155.  
+Logistic regression ranked second with 0.69 accuracy and a Macro-F1 score of 0.6759, while random forest and XGBoost obtained lower scores of 0.6332 and 0.5753 Macro-F1 respectively.
+
+| Model | Accuracy | Macro-F1 | Weighted-F1 |
+|---|---:|---:|---:|
+| SVM | 0.73 | 0.7155 | 0.71 |
+| Logistic Regression | 0.69 | 0.6759 | 0.68 |
+| Random Forest | 0.66 | 0.6332 | 0.63 |
+| XGBoost | 0.60 | 0.5753 | 0.58 |
+
+These results suggest that the final handcrafted feature representation was more suitable for linear or margin-based classifiers than for tree-based ensemble models.
+
 ### Key Findings
-- Improved preprocessing increased robustness for degraded audio.
-- Adding richer spectral descriptors improved class separation.
-- Bandlimited detection helped identify clips affected by high-frequency loss.
-- Some classes remained difficult due to overlapping acoustic characteristics.
+
+- The final preprocessing pipeline included peak normalization, silence trimming, optional pre-emphasis for low-SNR clips, and optional enhancement for bandlimited audio, which was designed to improve robustness for degraded inputs.
+- The final active feature set combined MFCC statistics, log-mel statistics, spectral centroid, spectral contrast, spectral rolloff, amplitude envelope, and RMSE statistics into a 273-dimensional feature vector.
+- This feature set appears to support class separation effectively, as shown by the stronger performance of SVM and logistic regression compared with random forest and XGBoost.
+- Bandlimited detection was explicitly included in the preprocessing pipeline through cutoff estimation and bandlimited-audio detection, allowing the system to identify clips affected by loss of high-frequency content.
+- Some classes remained difficult across multiple models, especially `clock_tick`, `car_horn`, `helicopter`, `hen`, and in some cases `airplane`, indicating persistent overlap in their acoustic characteristics.
 
 ### Error Analysis
-Common confusion cases included:
-- `class A` vs `class B`
-- `class C` vs `class D`
 
-Possible reasons:
-- Similar spectral profiles
-- Background noise contamination
-- Short-duration transient events
-- Loss of high-frequency content in bandlimited samples
+Common confusion cases were still observed in the final system.  
+In the notebook’s misclassification examples, `car_horn` was predicted as `clapping`, `clock_alarm`, `chirping_birds`, and `train`, showing that this class was particularly difficult to separate reliably.  
+More broadly, `clock_tick` achieved an F1-score of 0.00 in SVM, random forest, and XGBoost, which indicates that some transient or weak-pattern classes remained challenging regardless of classifier choice.
+
+Possible reasons for these errors include:
+
+- Similar spectral profiles between certain environmental sounds.
+- Background noise contamination that reduces the clarity of distinguishing features.
+- Short-duration or transient events that may not be fully captured by pooled statistical features.
+- Loss of high-frequency content in degraded or bandlimited samples, which can remove useful discriminatory information.
+
+### Interpretation
+
+The SVM performed best because it was able to exploit the scaled handcrafted features more effectively than the other tested models.  
+Logistic regression also performed reasonably well, which suggests that the selected features already provided useful structure even under a simpler decision boundary.  
+By contrast, the lower results from random forest and XGBoost suggest that the current feature representation was less compatible with tree-based partitioning on this dataset.
 
 ---
 
@@ -194,6 +208,6 @@ The notebook also displays evaluation outputs such as the classification report,
 ---
 
 ## Limitations
-- Handcrafted DSP features may not capture all complex sound patterns.
-- Some classes are difficult to separate with classical ML models alone.
-- Performance may be sensitive to heavy distortion or unseen noise conditions.
+- Handcrafted DSP features may not capture all complex sound patterns present in environmental audio.
+- Some classes remain difficult to separate using classical machine learning models alone, as shown by the repeated low F1-scores for several categories across multiple models.
+- The notebook explicitly accounts for noisy and bandlimited conditions, but performance may still be sensitive to heavier distortion or unseen noise conditions beyond those handled by the current preprocessing pipeline.
