@@ -42,9 +42,8 @@ The goal is to improve robustness for clean, noisy, and bandlimited audio clips 
 ---
 
 ## Implementation
-### 1. Audio Preprocessing
 
-## Core preprocessing
+## Core Audio preprocessing
 
 This table covers the steps that are always part of the input pipeline for each clip.
 
