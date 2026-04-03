@@ -198,7 +198,7 @@ To reproduce the project results, run the Colab notebook from top to bottom with
 
 The notebook expects the dataset to be extracted under content/data/ and then uses content/data/train and content/data/submission as the training and submission directories.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cv1Ca65uVn4o1oGNZPcVl9eFC8Y7CpAe?usp=sharing)
+Colab Link: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cv1Ca65uVn4o1oGNZPcVl9eFC8Y7CpAe?usp=sharing)
 
 
 ### Environment Setup
