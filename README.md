@@ -36,9 +36,6 @@ The goal is to improve robustness for clean, noisy, and bandlimited audio clips 
 │       ├── predictions.csv
 │       ├── classification_report.txt
 │       └── confusion_matrix.png
-├── data/
-│   ├── train/
-│   └── submission/
 └── README.md
 ```
 
@@ -53,8 +50,6 @@ The goal is to improve robustness for clean, noisy, and bandlimited audio clips 
 - `predictions.csv`: Predicted labels for the submission dataset.
 - `classification_report.txt`: Performance summary including precision, recall, F1-score, and support.
 - `confusion_matrix.png`: Visual confusion matrix for validation results.
-- `data/train/`: Labeled training dataset.
-- `data/submission/`: Unlabeled dataset used for final prediction.
 - `README.md`: Documentation for project structure, usage, and results.
 ---
 
@@ -84,13 +79,15 @@ This table describes the conditional logic that is only applied when the clip ap
 
 ### 2. Feature Extraction
 The system uses handcrafted DSP features to capture temporal and spectral characteristics of environmental sounds:
-- MFCC statistics
-- Delta and delta-delta MFCC features
-- Log-mel spectrogram statistics
-- Spectral centroid
-- Spectral bandwidth
-- Zero-crossing rate
-- Amplitude envelope statistics
+| Feature Function | Description | 
+|---|---:|
+| `features_mfcc_stats(y, sr)` | MFCC statistics, including delta and delta-delta summaries 
+| `features_logmel_stats(y, sr)` | Log-mel spectrogram summary statistics 
+| `spectral_centroid_stats(y, sr)` | Spectral centroid mean and standard deviation 
+| `spectral_contrast_stats(y, sr)` | Spectral contrast mean and standard deviation across bands 
+| `spectral_rolloff_stats(y, sr)` | Spectral rolloff mean, standard deviation, and median|
+| `amplitude_envelope_stats(y, sr)` | Amplitude envelope statistics: mean, std, max, and min 
+| `rmse_stats(y, sr)` | Root-mean-square energy mean and standard deviation 
 
 
 ### 3. DSP Design Rationale
@@ -103,10 +100,13 @@ For example, percussive sounds such as knocking and gunshots tend to have sharp 
 ## Model and Experiments
 ### Model
 The main classifier used in this project is:
-- `Logistic Regression` / `SVM` / `Random Forest` / `XGBoost`  
+-  `SVM` 
 
 ### Experimental Setup
 Experiments were conducted to compare:
+
+## Features Extraction:
+Several additional features were implemented, including dominant frequency, spectral peak structure, pitch tracking, spectral flatness, spectral bandwidth, and zero-crossing rate. However, these features were excluded from the final pipeline because they were commented out in the final extractor and therefore were not part of the final 273-dimensional feature vector used for model training and prediction
 - Baseline features vs improved DSP features
 - With and without preprocessing
 - With and without bandlimited enhancement
