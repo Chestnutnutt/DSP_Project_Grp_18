@@ -160,7 +160,7 @@ These results suggest that the final handcrafted feature representation was more
 - The final active feature set combined MFCC statistics, log-mel statistics, spectral centroid, spectral contrast, spectral rolloff, amplitude envelope, and RMSE statistics into a 273-dimensional feature vector.
 - This feature set appears to support class separation effectively, as shown by the stronger performance of SVM and logistic regression compared with random forest and XGBoost.
 - Bandlimited detection was explicitly included in the preprocessing pipeline through cutoff estimation and bandlimited-audio detection, allowing the system to identify clips affected by loss of high-frequency content.
-- Some classes remained difficult across multiple models, especially `clock_tick`, `car_horn`, `helicopter`, `hen`, and in some cases `airplane`, indicating persistent overlap in their acoustic characteristics.
+- Some classes remained difficult across multiple models, especially `clock_tick`, `car_horn`, and `airplane`, indicating persistent overlap in their acoustic characteristics.
 
 ### Error Analysis
 
