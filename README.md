@@ -164,7 +164,7 @@ These results suggest that the final handcrafted feature representation was more
 
 ### Error Analysis
 
-Common confusion cases were still observed in the final system.  
+Common confusion cases were still observed in the final system. The table below displays the confusion matrix depicting the perofrmance of each of the machine learning models used on a sample of 240 audio signals, with 4 - 5 samples of each of the 50 classes.
 | Logistic Regression | Random Forest |
 |---|---|
 | <img src="ML%20Results/log_reg_confusion_matrix.png" alt="Logistic Regression Confusion Matrix" width="100%"> | <img src="ML%20Results/random_forest_confusion_matrix.png" alt="Random Forest Confusion Matrix" width="100%"> |
@@ -173,22 +173,33 @@ Common confusion cases were still observed in the final system.
 |---|---|
 | <img src="ML%20Results/svm_confusion_matrix.png" alt="SVM Confusion Matrix" width="100%"> | <img src="ML%20Results/xgb_confusion_matrix.png" alt="XGBoost Confusion Matrix" width="100%"> |
 
+### Interpretation
 
-In the notebook’s misclassification examples, `car_horn` was predicted as `clapping`, `clock_alarm`, `chirping_birds`, and `train`, showing that this class was particularly difficult to separate reliably.  
-More broadly, `clock_tick` achieved an F1-score of 0.00 in SVM, random forest, and XGBoost, which indicates that some transient or weak-pattern classes remained challenging regardless of classifier choice.
+The SVM model performed best because it was able to utilise the handcrafted features more effectively than the other tested models.  
+Logistic Regression also performed reasonably well, which suggests that the selected features already provided useful structure even under a simpler decision boundary.
+
+By contrast, the poorer results from the Random Forest and XGBoost models suggest that the current feature representation might be less compatible with tree-based partitioning on this dataset. Another possibility is that the models were not fine-tuned well enough for this application.
+
+#### Classification Errors: SVM Model
+
+The SVM model performed very poorly in the classification of the following:
+- `Airplane` (1/5)
+- `Car Horn` (1/5)
+- `Clock Tick` (0/5)
+- `Coughing` (1/5)
+
+In contrast, the XGBoost model greatly outperformed the SVM model in the classification of the `Car Horn` signals, accurately predicting 4 of 5 of the samples, and slightly better in the classification of the `Coughing` signals, scoring a 2 out of 5.
+
+To add, for the classification of the `Clock Tick` signals, the Logistic Regressing and Random Forest models also performed slightly better than the SVM model, accurately classifying 2 of 5 of the samples correstly.
+
+Finally, all the models performed unsatisfactorily in the classification of `Airplane` signals.
 
 Possible reasons for these errors include:
 
 - Similar spectral profiles between certain environmental sounds.
 - Background noise contamination that reduces the clarity of distinguishing features.
-- Short-duration or transient events that may not be fully captured by pooled statistical features.
-- Loss of high-frequency content in degraded or bandlimited samples, which can remove useful discriminatory information.
-
-### Interpretation
-
-The SVM performed best because it was able to exploit the scaled handcrafted features more effectively than the other tested models.  
-Logistic regression also performed reasonably well, which suggests that the selected features already provided useful structure even under a simpler decision boundary.  
-By contrast, the lower results from random forest and XGBoost suggest that the current feature representation was less compatible with tree-based partitioning on this dataset.
+- Short-duration or transient events that may not be fully captured by pooled statistical features that were heavily used.
+- Loss of low or high-frequency content in degraded or bandlimited samples, which can remove useful discriminatory information.
 
 ---
 
@@ -198,7 +209,9 @@ To reproduce the project results, run the Colab notebook from top to bottom with
 
 The notebook expects the dataset to be extracted under content/data/ and then uses content/data/train and content/data/submission as the training and submission directories.
 
-Colab Link: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cv1Ca65uVn4o1oGNZPcVl9eFC8Y7CpAe?usp=sharing)
+Google Colab Notebook:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cv1Ca65uVn4o1oGNZPcVl9eFC8Y7CpAe?usp=sharing)
 
 
 ### Environment Setup
