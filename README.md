@@ -230,6 +230,7 @@ For comparison, an example audio signal in the time and frequency domain for the
 <img src="Analysis/Airplane/car_horn_signal_example.png" width="45%">
 <img src="Analysis/Airplane/engine_signal_example.png" width="45%">
 
+The classification error is likely caused by feature overlap between airplane, engine, and car horn signals. While the model incorporates a broader set of features beyond MFCCs, including log-mel, spectral centroid, spectral contrast, spectral rolloff, amplitude envelope, and RMSE statistics, these features are still largely based on global spectral shape and energy distribution. Since these classes can share broadband, noise-like characteristics and similar overall frequency content, their feature representations may remain insufficiently separable. Furthermore, reducing each feature to summary statistics removes fine-grained temporal patterns that could help distinguish the gradual build-up of airplane sounds from the more stationary behaviour of engine sounds or the more distinct structure of car horn signals. This causes the SVM to confuse classes that occupy similar regions in feature space.
 
 <ins>Analysis: Car Horn Signals</ins>
 
@@ -245,6 +246,7 @@ For comparison, an example audio signal in the time and frequency domain for the
 <img src="Analysis/Car Horn/clapping_signal_example.png" width="45%">
 <img src="Analysis/Car Horn/train_signal_example.png" width="45%">
 
+The misclassification of car horn signals as clapping and train is primarily due to the loss of temporal information in the feature extraction process. While the model incorporates a range of spectral and energy-based features, these are reduced to summary statistics, which capture overall characteristics but discard temporal dynamics. This is critical, as the distinguishing factor between these classes lies in their temporal patterns: car horns tend to be sustained, clapping consists of discrete impulsive events, and train sounds often exhibit periodic or repeating structures. When these signals are represented using averaged statistics, their distinct temporal signatures are not preserved, leading to overlapping feature representations. As a result, the SVM model is unable to effectively separate these classes, causing misclassification.
 
 <ins>Analysis: Clock Tick Signals</ins>
 
@@ -260,6 +262,8 @@ For comparison, an example audio signal in the time and frequency domain for the
 <img src="Analysis/Clock Tick/drinking_sipping_signal_example.png" width="45%">
 <img src="Analysis/Clock Tick/laughing_signal_example.png" width="45%">
 
+The misclassification of clock tick signals as drinking sipping and laughing is mainly due to the lack of temporal periodicity information in the feature representation. Although all three signals contain impulsive energy patterns, the defining characteristic of clock tick signals is their strong regularity and consistent temporal spacing between events. In contrast, drinking sipping and laughing signals exhibit irregular or clustered temporal structures. Since the extracted features are largely based on global statistics of spectral and amplitude characteristics, they fail to capture the timing and periodic arrangement of these impulses. Consequently, signals with fundamentally different temporal organisations are mapped to similar feature representations, causing the SVM model to misclassify periodic clock tick signals as other impulsive sound classes.
+
 <ins>Analysis: Coughing Signals</ins>
 
 The table below displays the incorrect classifications made by the SVM model for the Coughing class.
@@ -273,6 +277,8 @@ An example coughing audio signal in the time and frequency domain is shown below
 For comparison, an example audio signal in the time and frequency domain for the crying baby and laughing classes, which were classes that the SVM model incorrectly classified the coughing signals as, is also shown below.
 <img src="Analysis/Coughing/crying_baby_signal_example.png" width="45%">
 <img src="Analysis/Coughing/laughing_signal_example.png" width="45%">
+
+The misclassification of coughing signals as crying baby and laughing arises from a combination of feature overlap and insufficient representation of temporal and spectral structure. Coughing and laughing signals are inherently similar, as both exhibit impulsive, broadband bursts separated by periods of silence, making them difficult to distinguish using global spectral and energy-based features. Furthermore, although crying baby signals typically contain more sustained and harmonic components, these distinctions are not effectively captured when features such as MFCC, log-mel spectrograms, and spectral descriptors are summarised using global statistics. This results in the loss of fine-grained temporal dynamics and harmonic structure, causing different signal types to appear similar in feature space. As a result, the SVM model is unable to reliably separate these classes, leading to misclassification.
 
 ---
 
